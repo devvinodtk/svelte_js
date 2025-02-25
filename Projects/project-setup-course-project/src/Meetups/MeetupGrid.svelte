@@ -4,15 +4,8 @@
 </script>
 
 <section id="meetups">
-  {#each meetups as meetup, i (meetup.id)}
-    <MeetupItem
-      title={meetup.title}
-      subtitle={meetup.subtitle}
-      description={meetup.description}
-      imageUrl={meetup.imageUrl}
-      address={meetup.address}
-      contactEmail={meetup.contactEmail}
-    />
+  {#each meetups as meetup (meetup.id)}
+    <MeetupItem on:toggleFavorite {...meetup} />
   {/each}
 </section>
 

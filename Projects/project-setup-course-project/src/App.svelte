@@ -1,26 +1,21 @@
 <script>
+  import EditMeetup from "./Meetups/EditMeetup.svelte";
   import MeetupGrid from "./Meetups/MeetupGrid.svelte";
-  import Header from "./UI/Header.svelte";
-  import TextInput from "./UI/TextInput.svelte";
   import Button from "./UI/Button.svelte";
-
-  let meetupTitle = "";
-  let meetupSubtitle = "";
-  let meetupDescription = "";
-  let meetupImageUrl = "";
-  let meetupAddress = "";
-  let meetupEmail = "";
+  import Header from "./UI/Header.svelte";
+  import Modal from "./UI/Modal.svelte";
 
   let meetups = [
     {
       id: "m1",
-      title: "Coding Bootcamp",
+      title: "Coding BootCamp",
       subtitle: "Learn to code in 2 hrs",
       description:
         "In this meetup, we will have some experts that teach you how to code.",
       imageUrl: "https://picsum.photos/id/11/2500/1667",
       address: "27th Nerd Road, 32532 New York",
       contactEmail: "code@test.com",
+      isFavorite: false,
     },
     {
       id: "m2",
@@ -30,79 +25,46 @@
       imageUrl: "https://picsum.photos/id/14/2500/1667",
       address: "27th Nerd Road, 32532 New York",
       contactEmail: "swim@test.com",
+      isFavorite: false,
     },
   ];
 
-  function saveMeetUps() {
-    meetups = [
-      ...meetups,
-      {
-        id: Math.floor(Math.random()),
-        title: meetupTitle,
-        subtitle: meetupSubtitle,
-        description: meetupDescription,
-        imageUrl: meetupImageUrl,
-        address: meetupAddress,
-        contactEmail: meetupEmail,
-      },
-    ];
+  let showMeetupForm = false;
+
+  function saveMeetUps(event) {
+    const data = event.detail;
+    meetups = [...meetups, { ...data }];
+    showMeetupForm = false;
+  }
+
+  function toggleFavoriteOnMeetups(event) {
+    const meetupId = event.detail.id;
+    const meetupsCopy = [...meetups];
+    const meetup = meetupsCopy.find((meetup) => meetup.id === meetupId);
+    if (meetup) {
+      meetup.isFavorite = !meetup.isFavorite;
+    }
+    meetups = [...meetupsCopy];
+    console.log(meetups);
   }
 </script>
 
 <Header />
 <main>
-  <form on:submit|preventDefault={saveMeetUps}>
-    <TextInput
-      id="title"
-      label="Title"
-      type="text"
-      value={meetupTitle}
-      on:input={(event) => (meetupTitle = event.target.value)}
+  <div class="meetup-control">
+    <Button on:click={() => (showMeetupForm = !showMeetupForm)}
+      >Add New MeetUp</Button
+    >
+  </div>
+  {#if showMeetupForm}
+    <EditMeetup
+      on:saveMeetUps={saveMeetUps}
+      on:cancel={() => {
+        showMeetupForm = false;
+      }}
     />
-
-    <TextInput
-      id="subtitle"
-      label="Sub Title"
-      type="text"
-      value={meetupSubtitle}
-      on:input={(event) => (meetupSubtitle = event.target.value)}
-    />
-
-    <TextInput
-      id="description"
-      label="Description"
-      type="textarea"
-      value={meetupDescription}
-      on:input={(event) => (meetupDescription = event.target.value)}
-    />
-
-    <TextInput
-      id="imageUrl"
-      label="Image URL"
-      type="text"
-      value={meetupImageUrl}
-      on:input={(event) => (meetupImageUrl = event.target.value)}
-    />
-
-    <TextInput
-      id="address"
-      label="Address"
-      type="text"
-      value={meetupAddress}
-      on:input={(event) => (meetupAddress = event.target.value)}
-    />
-
-    <TextInput
-      id="email"
-      label="Email"
-      type="text"
-      value={meetupEmail}
-      on:input={(event) => (meetupEmail = event.target.value)}
-    />
-
-    <Button type="submit" label="Save"></Button>
-  </form>
-  <MeetupGrid {meetups} />
+  {/if}
+  <MeetupGrid on:toggleFavorite={toggleFavoriteOnMeetups} {meetups} />
 </main>
 
 <style>
@@ -110,9 +72,7 @@
     margin-top: 5rem;
   }
 
-  form {
-    width: 30rem;
-    max-width: 90%;
-    margin: auto;
+  .meetup-control {
+    margin: 1rem;
   }
 </style>
