@@ -3,6 +3,7 @@
   import Button from "../UI/Button.svelte";
   import Modal from "../UI/Modal.svelte";
   import { createEventDispatcher } from "svelte";
+  import { isEmpty, isValidEmail } from "../helpers/validation";
 
   let meetupTitle = "";
   let meetupSubtitle = "";
@@ -10,6 +11,21 @@
   let meetupImageUrl = "";
   let meetupAddress = "";
   let meetupEmail = "";
+
+  $: titleValid = !isEmpty(meetupTitle);
+  $: subtitleValid = !isEmpty(meetupSubtitle);
+  $: descriptionValid = !isEmpty(meetupDescription);
+  $: imageUrlValid = !isEmpty(meetupImageUrl);
+  $: addressValid = !isEmpty(meetupAddress);
+  $: emailValid = isValidEmail(meetupEmail);
+
+  $: isFormValid =
+    titleValid &&
+    subtitleValid &&
+    descriptionValid &&
+    imageUrlValid &&
+    addressValid &&
+    emailValid;
 
   let dispatch = createEventDispatcher();
   function submitForm() {
@@ -29,6 +45,8 @@
 <Modal title="Add New Meetup" on:cancel>
   <form on:submit|preventDefault={submitForm}>
     <TextInput
+      valid={titleValid}
+      errorMessage="Please add a valid title"
       id="title"
       label="Title"
       type="text"
@@ -37,6 +55,8 @@
     />
 
     <TextInput
+      valid={subtitleValid}
+      errorMessage="Please add a valid sub-title"
       id="subtitle"
       label="Sub Title"
       type="text"
@@ -45,6 +65,8 @@
     />
 
     <TextInput
+      valid={descriptionValid}
+      errorMessage="Please add a valid description"
       id="description"
       label="Description"
       type="textarea"
@@ -53,6 +75,8 @@
     />
 
     <TextInput
+      valid={imageUrlValid}
+      errorMessage="Please add a valid image URL"
       id="imageUrl"
       label="Image URL"
       type="text"
@@ -61,6 +85,8 @@
     />
 
     <TextInput
+      valid={addressValid}
+      errorMessage="Please add a valid address"
       id="address"
       label="Address"
       type="text"
@@ -69,6 +95,8 @@
     />
 
     <TextInput
+      valid={emailValid}
+      errorMessage="Please add a valid email"
       id="email"
       label="Email"
       type="text"
@@ -78,7 +106,9 @@
   </form>
   <div slot="footer">
     <Button mode="outline" on:click={() => dispatch("cancel")}>Close</Button>
-    <Button type="submit" on:click={submitForm}>Save</Button>
+    <Button type="submit" disabled={!isFormValid} on:click={submitForm}
+      >Save</Button
+    >
   </div>
 </Modal>
 

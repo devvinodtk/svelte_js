@@ -4,12 +4,13 @@
   export let href = null;
   export let mode = "";
   export let color = "";
+  export let disabled = false;
 </script>
 
 {#if href}
   <a {href}><slot /></a>
 {:else}
-  <button class="{mode} {color}" {type} on:click><slot /></button>
+  <button {disabled} class="{mode} {color}" {type} on:click><slot /></button>
 {/if}
 
 <style>

@@ -3,16 +3,49 @@
   export let id;
   export let value;
   export let type;
+  export let valid = true;
+  export let errorMessage = "";
+  let isDirty = false;
 </script>
 
 <div class="form-control">
   <label for={id}>{label}</label>
   {#if type === "text"}
-    <input {id} type="text" {value} on:input />
+    <input
+      class:invalid={!valid && isDirty}
+      {id}
+      type="text"
+      {value}
+      on:input
+      on:blur={() => {
+        isDirty = true;
+      }}
+    />
   {:else if type === "email"}
-    <input {id} type="email" {value} on:input />
+    <input
+      {id}
+      class:invalid={!valid && isDirty}
+      type="email"
+      {value}
+      on:input
+      on:blur={() => {
+        isDirty = true;
+      }}
+    />
   {:else}
-    <textarea {id} row="3" {value} on:input />
+    <textarea
+      class:invalid={!valid && isDirty}
+      {id}
+      row="3"
+      {value}
+      on:input
+      on:blur={() => {
+        isDirty = true;
+      }}
+    />
+  {/if}
+  {#if isDirty && !valid && errorMessage}
+    <p class="error-message">{errorMessage}</p>
   {/if}
 </div>
 
@@ -45,6 +78,16 @@
   .form-control {
     padding: 0.5rem 0;
     width: 100%;
+    margin: 0.25rem 0;
+  }
+
+  .invalid {
+    border-color: red;
+    background-color: rgb(240, 151, 151);
+  }
+
+  .error-message {
+    color: red;
     margin: 0.25rem 0;
   }
 </style>
