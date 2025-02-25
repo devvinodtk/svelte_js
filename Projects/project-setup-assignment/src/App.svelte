@@ -27,6 +27,14 @@
       passwordsArray = passwordsArray.filter((pw, idx) => idx !== index);
     }
   }
+
+  let agreed = false;
+  let favColor = "red";
+  let favBev = [];
+  let myColor = "red";
+  let username = "";
+
+  $: console.log("agreed: ", agreed);
 </script>
 
 {#if password && password.length >= 5 && password.length <= 10}
@@ -45,6 +53,86 @@
     </li>
   {/each}
 </ul>
+
+<label for="checkbox">
+  Agree to terms
+  <input type="checkbox" bind:checked={agreed} />
+</label>
+
+<h1>Favorite color: {favColor}</h1>
+<label for="color-red">
+  <input
+    type="radio"
+    value="red"
+    bind:group={favColor}
+    name="color"
+    id="color-red"
+  /> Red
+</label>
+<label for="color-green">
+  <input
+    type="radio"
+    value="green"
+    bind:group={favColor}
+    name="color"
+    id="color-green"
+  /> Green
+</label>
+<label for="color-blue">
+  <input
+    type="radio"
+    value="blue"
+    bind:group={favColor}
+    name="color"
+    id="color-blue"
+  /> Blue
+</label>
+
+<h1>Favorite Beverage: {favBev}</h1>
+
+<label for="bev-tea">
+  <input
+    type="checkbox"
+    value="Tea"
+    bind:group={favBev}
+    name="bev"
+    id="bev-tea"
+  /> Tea
+</label>
+<label for="bev-coffee">
+  <input
+    type="checkbox"
+    value="Coffee"
+    bind:group={favBev}
+    name="bev"
+    id="bev-coffee"
+  /> Coffee
+</label>
+<label for="bev-beer">
+  <input
+    type="checkbox"
+    value="Beer"
+    bind:group={favBev}
+    name="bev"
+    id="bev-beer"
+  /> Beer
+</label>
+<br />
+
+<h1>Select a color: {myColor}</h1>
+<select bind:value={myColor}>
+  <option value="red">Red</option>
+  <option value="green">Green</option>
+  <option value="blue">Blue</option>
+</select>
+<br /> <br />
+
+<input type="text" bind:this={username} />
+<button
+  on:click={() => {
+    console.log(username.value);
+  }}>Save</button
+>
 
 <style>
   #password {
