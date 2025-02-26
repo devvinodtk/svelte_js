@@ -4,6 +4,7 @@
   import Modal from "../UI/Modal.svelte";
   import { createEventDispatcher } from "svelte";
   import { isEmpty, isValidEmail } from "../helpers/validation";
+  import customMeetupStore from "../Meetups/meetups-store";
 
   let meetupTitle = "";
   let meetupSubtitle = "";
@@ -29,7 +30,7 @@
 
   let dispatch = createEventDispatcher();
   function submitForm() {
-    dispatch("saveMeetUps", {
+    customMeetupStore.addMeetup({
       id: Math.floor(Math.random()),
       title: meetupTitle,
       subtitle: meetupSubtitle,
@@ -39,6 +40,7 @@
       contactEmail: meetupEmail,
       isFavorite: false,
     });
+    dispatch("saveMeetUps");
   }
 </script>
 
