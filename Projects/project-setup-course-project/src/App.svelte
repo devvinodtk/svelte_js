@@ -4,6 +4,7 @@
   import Button from "./UI/Button.svelte";
   import Header from "./UI/Header.svelte";
   import customMeetupStore from "./Meetups/meetups-store";
+  import MeetupDetails from "./Meetups/MeetupDetails.svelte";
 
   let meetups = [];
   customMeetupStore.subscribe((items) => {
@@ -12,28 +13,53 @@
   });
 
   let showMeetupForm = false;
+  let page = "overview";
+  let meetupId = null;
 
   function saveMeetUps() {
     showMeetupForm = false;
+    meetupId = null;
   }
 </script>
 
 <Header />
 <main>
-  <div class="meetup-control">
-    <Button on:click={() => (showMeetupForm = !showMeetupForm)}
-      >Add New MeetUp</Button
-    >
-  </div>
   {#if showMeetupForm}
     <EditMeetup
       on:saveMeetUps={saveMeetUps}
       on:cancel={() => {
         showMeetupForm = false;
+        meetupId = null;
+      }}
+      {meetupId}
+    />
+  {/if}
+  {#if page === "detailview"}
+    <MeetupDetails
+      id={meetupId}
+      on:cancelShowDetails={() => {
+        page = "overview";
+        meetupId = null;
+      }}
+    />
+  {:else if page === "overview"}
+    <div class="meetup-control">
+      <Button on:click={() => (showMeetupForm = !showMeetupForm)}
+        >Add New MeetUp</Button
+      >
+    </div>
+    <MeetupGrid
+      {meetups}
+      on:showDetails={(event) => {
+        meetupId = event.detail.id;
+        page = "detailview";
+      }}
+      on:editMeetup={(event) => {
+        meetupId = event.detail.id;
+        showMeetupForm = true;
       }}
     />
   {/if}
-  <MeetupGrid {meetups} />
 </main>
 
 <style>

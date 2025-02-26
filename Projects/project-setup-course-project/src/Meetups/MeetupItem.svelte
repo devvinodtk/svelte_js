@@ -2,6 +2,7 @@
   import Badge from "../UI/Badge.svelte";
   import Button from "../UI/Button.svelte";
   import customMeetupStore from "../Meetups/meetups-store";
+  import { createEventDispatcher } from "svelte";
   export let id;
   export let title;
   export let subtitle;
@@ -10,6 +11,11 @@
   export let address;
   export let contactEmail;
   export let isFavorite;
+  const dispatch = createEventDispatcher();
+
+  function deleteMeetup() {
+    customMeetupStore.removeMeetup(id);
+  }
 </script>
 
 <article>
@@ -28,15 +34,22 @@
   </div>
   <div class="content">{description}</div>
   <footer>
-    <Button href="mailto:{contactEmail}" slots="button-label">✉️ Email</Button>
+    <Button
+      mode="outline"
+      on:click={() => {
+        dispatch("editMeetup", { id });
+      }}>✎</Button
+    >
+    <Button href="mailto:{contactEmail}" slots="button-label">✉️</Button>
     <Button
       mode="outline"
       color={isFavorite ? "" : "success"}
       on:click={() => {
         customMeetupStore.toggleFavorite(id);
-      }}>{isFavorite ? "Un-Favorite" : "Favorite"}</Button
+      }}>{isFavorite ? "💔" : "❤️"}</Button
     >
-    <Button>Show Details</Button>
+    <Button on:click={dispatch("showDetails", { id })}>👁️</Button>
+    <Button mode="outline" on:click={deleteMeetup}>🗑️</Button>
   </footer>
 </article>
 

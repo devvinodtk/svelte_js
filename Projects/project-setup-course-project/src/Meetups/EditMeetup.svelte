@@ -6,12 +6,28 @@
   import { isEmpty, isValidEmail } from "../helpers/validation";
   import customMeetupStore from "../Meetups/meetups-store";
 
+  export let meetupId = null;
+
   let meetupTitle = "";
   let meetupSubtitle = "";
   let meetupDescription = "";
   let meetupImageUrl = "";
   let meetupAddress = "";
   let meetupEmail = "";
+
+  if (meetupId) {
+    const unsubscribe = customMeetupStore.subscribe((items) => {
+      const selectedMeetup = items.find((item) => item.id === meetupId);
+      meetupTitle = selectedMeetup.title;
+      meetupSubtitle = selectedMeetup.subtitle;
+      meetupDescription = selectedMeetup.description;
+      meetupImageUrl = selectedMeetup.imageUrl;
+      meetupAddress = selectedMeetup.address;
+      meetupEmail = selectedMeetup.contactEmail;
+    });
+
+    unsubscribe();
+  }
 
   $: titleValid = !isEmpty(meetupTitle);
   $: subtitleValid = !isEmpty(meetupSubtitle);
@@ -30,8 +46,8 @@
 
   let dispatch = createEventDispatcher();
   function submitForm() {
-    customMeetupStore.addMeetup({
-      id: Math.floor(Math.random()),
+    const meetupData = {
+      id: meetupId ? meetupId : new Date().getTime(),
       title: meetupTitle,
       subtitle: meetupSubtitle,
       description: meetupDescription,
@@ -39,7 +55,13 @@
       address: meetupAddress,
       contactEmail: meetupEmail,
       isFavorite: false,
-    });
+    };
+
+    if (meetupId) {
+      customMeetupStore.editMeetup(meetupData);
+    } else {
+      customMeetupStore.addMeetup(meetupData);
+    }
     dispatch("saveMeetUps");
   }
 </script>
